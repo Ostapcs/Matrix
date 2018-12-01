@@ -6,6 +6,8 @@ import sys
 class Matrix:
 
     def __init__(self, size=None, rows=None, column=None, wayofcreation="create"):
+        self.indexrow = 0
+        self.indexcolumn = 0
         if size is None or rows is None or column is None:
             raise ValueError('Error : Invalid parameters')
 
@@ -44,20 +46,31 @@ class Matrix:
         else:
             raise ValueError("Matrix's shapes should be equal")
 
+    def __next__(self):
+
+        try:
+            element = self.matrix[self.indexcolumn][self.indexrow]
+        except:
+            raise StopIteration()
+        if self.indexrow < self.matrix.shape[1] - 1 and self.indexcolumn <= self.matrix.shape[0] - 1:
+            self.indexrow += 1
+        else:
+            self.indexcolumn += 1
+            self.indexrow = 0
+
+        return element
+
+    def __iter__(self):
+        self.indexrow = 0
+        self.indexcolumn = 0
+        return self
+
     def __mul__(self, other):
         if self.matrix.shape[0] == other.matrix.shape[0] and self.matrix.shape[1] == other.matrix.shape[1]:
             self.matrix = self.matrix @ other.matrix
             return self
 
         elif self.matrix.shape[1] == other.matrix.shape[0]:
-            # result = np.empty([self.matrix.shape[0], other.matrix.shape[1]])
-            # for i in range(self.matrix.shape[0]):
-            #     res = 0
-            #     for j in range(other.matrix.shape[1]):
-            #         for k in range(self.matrix.shape[1]):
-            #             res += self.matrix[i][k] * other.matrix[k][j]
-            #         result[i][j] = res
-            # self.matrix = result
             self.matrix = self.matrix @ other.matrix
             return self
 
@@ -65,23 +78,64 @@ class Matrix:
             raise ValueError("First matrix's quantity of columns should be equal to second matrix's quantity of rows")
 
     def genSpiral(self):
-        m = 0
-        for v in range(self.matrix.shape[0] // 2):
+        for v in range(int(np.ceil(self.matrix.shape[1] / 2))):
+            i, j = v, v
 
-            for i in range(self.matrix.shape[0] - m):
-                yield self.matrix[v][i + v]
+            while j < self.matrix.shape[1] - 1 - v:
+                yield self.matrix[i][j]
+                j += 1
 
-            for i in range(v + 1, self.matrix.shape[0] - v):
-                yield self.matrix[i][-v - 1]
+            while i < self.matrix.shape[0] - 1 - v:
+                yield self.matrix[i][j]
+                i += 1
 
-            for i in range(v + 1, self.matrix.shape[0] - v):
-                yield self.matrix[-v-1][-i - 1]
+            while j > v:
+                yield self.matrix[i][j]
+                j -= 1
 
-            for i in range(v + 1, self.matrix.shape[0] - (v + 1)):
-                yield self.matrix[-i - 1][v]
+            while i > v:
+                yield self.matrix[i][j]
+                i -= 1
 
-            m += 2
-        yield self.matrix[self.matrix.shape[0]//2][self.matrix.shape[0]//2]
+        if self.matrix.shape[0] == self.matrix.shape[1]:
+            yield self.matrix[self.matrix.shape[1]//2][self.matrix.shape[1]//2]
+
+        # v = 0
+        # while v < int(np.ceil((self.matrix.shape[1] / 2))):
+        #     i, j = v, v
+        #     while j < self.matrix.shape[1] - 1 - v:
+        #         yield self.matrix[i][j]
+        #         j += 1
+        #
+        #     while i < self.matrix.shape[0] - 1 - v:
+        #         yield self.matrix[i][j]
+        #         i += 1
+        #
+        #     while j > v:
+        #         yield self.matrix[i][j]
+        #         j -= 1
+        #
+        #     while i > v:
+        #         yield self.matrix[i][j]
+        #         i -= 1
+        #
+        #     v += 1
+        # for v in range(self.matrix.shape[0] // 2):
+        #
+        #     for i in range(self.matrix.shape[1] - m):
+        #         print(self.matrix[v][i + v])
+        #
+        #     for i in range(v + 1, self.matrix.shape[0] - v):
+        #         print(self.matrix[i][-v - 1])
+        #
+        #     for i in range(v + 1, self.matrix.shape[1] - v):
+        #         print(self.matrix[-v - 1][-i - 1])
+        #
+        #     for i in range(v + 1, self.matrix.shape[0] - (v + 1)):
+        #         print(self.matrix[-i - 1][v])
+        #
+        #     m += 1
+        # # yield self.matrix[self.matrix.shape[0]//2][self.matrix.shape[0]//2]
 
     def tanspose(self):
         self.matrix = np.transpose(self.matrix)
@@ -110,3 +164,9 @@ class Matrix:
         norma1 = np.linalg.norm(self.matrix, np.inf)
         norma_infinity = np.linalg.norm(self.matrix, 1)
         return [frobenius_norm, norma1, norma_infinity]
+
+    def Eig(self):
+        # if self.matrix.shape[0] == self.matrix.shape[1]:
+        #     return np.linalg.eig(self.matrix)
+        # else:
+        return np.linalg.eigvals(self.matrix)

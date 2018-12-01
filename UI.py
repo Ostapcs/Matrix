@@ -1,6 +1,7 @@
 from Matrix import Matrix
 import sys
 from numpy import zeros
+from numpy import where
 from ast import literal_eval
 
 
@@ -21,6 +22,8 @@ def info():
     6. invert
     7. norms
     8. exit
+    9. eig (eigenvalues and eigenvectors)
+    10. print
     """
 
 
@@ -70,7 +73,7 @@ def UI():
             othermtrx = CreateMatrix()
             try:
                 mtrx = mtrx + othermtrx
-                print(mtrx.matrix)
+
             except:
                 print(sys.exc_info()[0], " : ", sys.exc_info()[1])
                 exit(0)
@@ -80,7 +83,7 @@ def UI():
             othermtrx = CreateMatrix()
             try:
                 mtrx = mtrx - othermtrx
-                print(mtrx.matrix)
+
             except:
                 print(sys.exc_info()[0], " : ", sys.exc_info()[1])
                 exit(0)
@@ -90,7 +93,7 @@ def UI():
             othermtrx = CreateMatrix()
             try:
                 mtrx = mtrx * othermtrx
-                print(mtrx.matrix)
+
             except:
                 print(sys.exc_info()[0], " : ", sys.exc_info()[1])
                 exit(0)
@@ -98,6 +101,7 @@ def UI():
         elif command == "transpose":
             try:
                 mtrx = mtrx.tanspose()
+
             except:
                 print(sys.exc_info()[0], " : ", sys.exc_info()[1])
                 exit(0)
@@ -129,6 +133,23 @@ def UI():
             except:
                 print(sys.exc_info()[0], " : ", sys.exc_info()[1])
                 exit(0)
+
+        elif command == "eig":
+            try:
+                items = mtrx.eig()
+                print(items)
+            except:
+                print(sys.exc_info()[0], " : ", sys.exc_info()[1])
+                exit(0)
+
+        elif command == "print":
+            # for i in mtrx:
+            #     if where(mtrx.matrix == i)[1] == mtrx.matrix.shape[1] - 1:
+            #         print(i, end="\n")
+            #     else:
+            #         print(i, end=" ")
+            print(mtrx.matrix)
+
         elif command == "exit":
             exit(1)
 
